@@ -6,14 +6,15 @@ const AppController = {
     const redisStatus = redisClient.isAlive();
     const dbStatus = dbClient.isAlive();
     if (redisStatus && dbStatus) {
-      res.json({ redis: true, db: true }).status(200);
+      return res.status(200).json({ redis: true, db: true })
     }
   },
   async getStats(req, res) {
     const nbUsers = await dbClient.nbUsers();
     const nbFiles = await dbClient.nbFiles();
+    console.log(nbUsers)
     if (dbClient.isAlive()) {
-      res.json({ users: nbUsers, files: nbFiles }).status(200);
+      return res.status(200).json({ users: nbUsers, files: nbFiles })
     }
   },
 };
