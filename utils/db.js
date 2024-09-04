@@ -28,8 +28,7 @@ class DBClient {
       const collection = this.userCollection;
       const result = await collection.find({}).toArray();
       return result.length;
-    }
-    catch(error) {
+    } catch (error) {
       if (error) {
         return error;
       }
@@ -42,8 +41,7 @@ class DBClient {
       const collection = this.fileCollection;
       const result = await collection.find({}).toArray();
       return result.length;
-    }
-    catch (error) {
+    } catch (error) {
       if (error) {
         return error;
       }

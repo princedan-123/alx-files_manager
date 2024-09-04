@@ -28,8 +28,7 @@ class RedisClient {
     try {
       const value = await getValue(key);
       return value;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(`an error occured during get ${error}`);
       return null;
     }
@@ -39,18 +38,16 @@ class RedisClient {
     const setValue = promisify(this.redisClient.set).bind(this.redisClient);
     try {
       await setValue(key, value, 'EX', duration);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   }
 
-  async del (key) {
+  async del(key) {
     const delKey = promisify(this.redisClient.del).bind(this.redisClient);
     try {
       await delKey(key);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
   }
