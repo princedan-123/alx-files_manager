@@ -2,13 +2,18 @@
 import { ObjectId } from 'mongodb';
 import {
   access, constants, readFile, writeFile, mkdir,
-} from 'fs/promises';
+} from 'fs';
 import path from 'path';
 import { v4 } from 'uuid';
 import mime from 'mime-types';
+import { promisify } from 'util';
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
+const accessFile = promisify(access);
+const read = promisify(readFile);
+const write = promisify(writeFile);
+const createDirectory = promisify(mkdir);
 const FilesController = {
   async postUpload(req, res) {
     /* user authentication */
@@ -66,14 +71,14 @@ const FilesController = {
     if (fileType !== 'folder') {
       const folderPath = process.env.FOLDER_PATH || '/tmp/files_manager';
       try {
-        await mkdir(folderPath, { recursive: true });
+        await createDirectory(folderPath, { recursive: true });
       } catch (error) {
         console.log(error);
       }
       const data = Buffer.from(fileData, 'base64').toString('utf-8');
       const filePath = path.join(folderPath, v4());
       try {
-        await writeFile(filePath, data, 'utf-8');
+        await write(filePath, data, 'utf-8');
       } catch (error) {
         console.log(error);
       }
@@ -211,12 +216,12 @@ const FilesController = {
           return res.status(400).json({ error: "A folder doesn't have content" });
         }
         try {
-          await access(file.localPath, constants.F_OK);
+          await accessFile(file.localPath, constants.F_OK);
         } catch (error) {
           return res.status(404).json({ error: 'Not found' });
         }
         const contentType = mime.contentType(file.name);
-        const fileContent = await readFile(file.localPath, 'utf-8');
+        const fileContent = await read(file.localPath, 'utf-8');
         res.set('Content-Type', contentType);
         return res.status(200).send(fileContent);
       }
